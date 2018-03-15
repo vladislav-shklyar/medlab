@@ -16,8 +16,8 @@ namespace medlab
         {
             if (!Page.IsPostBack)
             {
-                SqlCommand cmd = new SqlCommand(@"SELECT req_id
-                                            FROM Request", con);
+                SqlCommand cmd = new SqlCommand(@"SELECT req_id, dept_name
+                                            FROM reqdept", con);
                 con.Open();
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 DataTable tbl = new DataTable();
@@ -43,7 +43,15 @@ namespace medlab
         protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
             Guid deleteid = Guid.Parse(GridView1.DataKeys[e.RowIndex]["req_id"].ToString());
-            SqlCommand cmd = new SqlCommand(String.Format("DELETE FROM Category WHERE req_id='{0}'", deleteid), con);
+            SqlCommand cmd = new SqlCommand(String.Format("DELETE FROM reqdept WHERE req_id='{0}'", deleteid), con);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            cmd = new SqlCommand(String.Format("DELETE FROM Requests WHERE req_id='{0}'", deleteid), con);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            cmd = new SqlCommand(String.Format("DELETE FROM Document WHERE req_id='{0}'", deleteid), con);
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
